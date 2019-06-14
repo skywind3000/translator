@@ -95,11 +95,16 @@ have you eaten yet
 | 引擎名称 | 说明 | 标准接口 | 国内直连 | 需要 Key 吗 | 免费 | 状态 |
 |---------|--------|--|--|--|--|--|
 | google | 谷歌 | Yes | Yes | No | 免费 | 完成 |
+| azure | 微软翻译 | Yes | Yes | Yes | 免费* | 完成 | 
 | youdao | 有道 | No | Yes | No | 免费 | 完成 | 
 | baidu | 百度 | Yes | Yes | Yes | 每月1万条内免费 | WIP |
 | baiduweb | 百度 | No (爬虫) | Yes | No | 免费 | TODO |
-| bing | 必应 | Yes | Yes | No | 免费 | TODO |
+| bing | 必应词典（只能中英） | Yes | Yes | No | 免费 | TODO |
 | ciba | 词霸 | Yes | Yes | Yes | 免费 | TODO |
+
+说明：
+
+- 微软 Azure 的翻译服务（必应），自己去 Azure 申请一个免费 Key，每月 1 万次免费查询。
 
 ## Credit
 

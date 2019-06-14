@@ -17,6 +17,59 @@ import copy
 
 
 #----------------------------------------------------------------------
+# 语言的别名
+#----------------------------------------------------------------------
+langmap = {
+        "arabic": "ar",
+        "bulgarian": "bg",
+        "catalan": "ca",
+        "chinese": "zh-CN",
+        "chinese simplified": "zh-CHS",
+        "chinese traditional": "zh-CHT",
+        "czech": "cs",
+        "danish": "da",	
+        "dutch": "nl",
+        "english": "en",
+        "estonian": "et",
+        "finnish": "fi",
+        "french": "fr",
+        "german": "de",
+        "greek": "el",
+        "haitian creole": "ht",
+        "hebrew": "he",
+        "hindi": "hi",
+        "hmong daw": "mww",
+        "hungarian": "hu",
+        "indonesian": "id",
+        "italian": "it",
+        "japanese": "ja",
+        "klingon": "tlh",
+        "klingon (piqad)":"tlh-Qaak",
+        "korean": "ko",
+        "latvian": "lv",
+        "lithuanian": "lt",
+        "malay": "ms",
+        "maltese": "mt",
+        "norwegian": "no",
+        "persian": "fa",
+        "polish": "pl",
+        "portuguese": "pt",
+        "romanian": "ro",
+        "russian": "ru",
+        "slovak": "sk",
+        "slovenian": "sl",
+        "spanish": "es",
+        "swedish": "sv",
+        "thai": "th",
+        "turkish": "tr",
+        "ukrainian": "uk",
+        "urdu": "ur",
+        "vietnamese": "vi",
+        "welsh": "cy"
+    }
+
+
+#----------------------------------------------------------------------
 # BasicTranslator
 #----------------------------------------------------------------------
 class BasicTranslator(object):
@@ -174,11 +227,70 @@ class BasicTranslator(object):
         return True
 
     # 猜测语言
-    def guess_language (self, text):
-        if self.check_english(text):
-            return ('en-US', 'zh-CN')
-        return ('zh-CN', 'en-US')
+    def guess_language (self, sl, tl, text):
+        if ((not sl) or sl == 'auto') and ((not tl) or tl == 'auto'):
+            if self.check_english(text):
+                sl, tl = ('en-US', 'zh-CN')
+            else:
+                sl, tl = ('zh-CN', 'en-US')
+        if sl.lower() in langmap:
+            sl = langmap[sl.lower()]
+        if tl.lower() in langmap:
+            tl = langmap[tl.lower()]
+        return sl, tl
     
+
+#----------------------------------------------------------------------
+# Azure Translator
+#----------------------------------------------------------------------
+class AzureTranslator (BasicTranslator):
+
+    def __init__ (self, **argv):
+        super(AzureTranslator, self).__init__('azure', **argv)
+        if 'apikey' not in self._config:
+            sys.stderr.write('error: missing apikey in [azure] section\n')
+            sys.exit()
+        self.apikey = self._config['apikey']
+
+    def translate (self, sl, tl, text):
+        import uuid
+        sl, tl = self.guess_language(sl, tl, text)
+        qs = self.url_quote(sl)
+        qt = self.url_quote(tl)
+        url = 'https://api.cognitive.microsofttranslator.com/translate'
+        url += '?api-version=3.0&from={}&to={}'.format(qs, qt)
+        headers = {
+            'Ocp-Apim-Subscription-Key': self.apikey,
+            'Content-type': 'application/json',
+            'X-ClientTraceId': str(uuid.uuid4())
+        }
+        body = [{'text' : text}]
+        import json
+        resp = self.http_post(url, json.dumps(body), headers).json()
+        # print(resp)
+        res = {}
+        res['text'] = text
+        res['sl'] = sl
+        res['tl'] = tl
+        res['translation'] = self.render(resp)
+        res['html'] = None
+        res['xterm'] = None
+        return res
+
+    def render (self, resp):
+        if not resp:
+            return ''
+        x = resp[0]
+        if not x:
+            return ''
+        y = x['translations']
+        if not y:
+            return ''
+        output = ''
+        for item in y:
+            output += item['text'] + '\n'
+        return output
+
 
 #----------------------------------------------------------------------
 # Google Translator
@@ -200,8 +312,7 @@ class GoogleTranslator (BasicTranslator):
         return url
 
     def translate (self, sl, tl, text):
-        if (sl is None or sl == 'auto') and (tl is None or tl == 'auto'):
-            sl, tl = self.guess_language(text)
+        sl, tl = self.guess_language(sl, tl, text)
         self.text = text
         url = self.get_url(sl, tl, text)
         r = self.http_get(url)
@@ -286,8 +397,7 @@ class YoudaoTranslator (BasicTranslator):
         return self.get_md5(s)
 
     def translate (self, sl, tl, text):
-        if (sl is None or sl == 'auto') and (tl is None or tl == 'auto'):
-            sl, tl = self.guess_language(text)
+        sl, tl = self.guess_language(sl, tl, text)
         self.text = text
         salt = str(int(time.time() * 1000) + random.randint(0, 10))
         sign = self.sign(text, salt)
@@ -351,7 +461,7 @@ class YoudaoTranslator (BasicTranslator):
 class BingDict (BasicTranslator):
 
     def __init__ (self, **argv):
-        super(BingDict, self).__init__('bing', **argv)
+        super(BingDict, self).__init__('bingdict', **argv)
         self._agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101'
         self._agent += ' Firefox/50.0'
         self._url = 'http://cn.bing.com/dict/SerpHoverTrans'
@@ -408,8 +518,7 @@ class BaiduTranslator (BasicTranslator):
         self._langmap = langmap
 
     def translate (self, sl, tl, text):
-        if (sl is None or sl == 'auto') and (tl is None or tl == 'auto'):
-            sl, tl = self.guess_language(text)
+        sl, tl = self.guess_language(sl, tl, text)
         req = {}
         req['query'] = text
         req['from'] = self._langmap.get(sl, 'en')
@@ -454,60 +563,9 @@ def getopt (argv):
 #----------------------------------------------------------------------
 ENGINES = {
         'google': GoogleTranslator,
+        'azure': AzureTranslator,
         'youdao': YoudaoTranslator,
-        'bingdict': BingDict,
-    }
-
-#----------------------------------------------------------------------
-# 
-#----------------------------------------------------------------------
-langmap = {
-        "arabic": "ar",
-        "bulgarian": "bg",
-        "catalan": "ca",
-        "chinese": "zh-CN",
-        "chinese simplified": "zh-CHS",
-        "chinese traditional": "zh-CHT",
-        "czech": "cs",
-        "danish": "da",	
-        "dutch": "nl",
-        "english": "en",
-        "estonian": "et",
-        "finnish": "fi",
-        "french": "fr",
-        "german": "de",
-        "greek": "el",
-        "haitian creole": "ht",
-        "hebrew": "he",
-        "hindi": "hi",
-        "hmong daw": "mww",
-        "hungarian": "hu",
-        "indonesian": "id",
-        "italian": "it",
-        "japanese": "ja",
-        "klingon": "tlh",
-        "klingon (piqad)":"tlh-Qaak",
-        "korean": "ko",
-        "latvian": "lv",
-        "lithuanian": "lt",
-        "malay": "ms",
-        "maltese": "mt",
-        "norwegian": "no",
-        "persian": "fa",
-        "polish": "pl",
-        "portuguese": "pt",
-        "romanian": "ro",
-        "russian": "ru",
-        "slovak": "sk",
-        "slovenian": "sl",
-        "spanish": "es",
-        "swedish": "sv",
-        "thai": "th",
-        "turkish": "tr",
-        "ukrainian": "uk",
-        "urdu": "ur",
-        "vietnamese": "vi",
-        "welsh": "cy"
+        'bing': BingDict,
     }
 
 
@@ -528,10 +586,6 @@ def main(argv = None):
     tl = options.get('to')
     if not tl:
         tl = 'auto'
-    if sl.lower() in langmap:
-        sl = langmap[sl.lower()]
-    if tl.lower() in langmap:
-        tl = langmap[tl.lower()]
     if not args:
         print('usage: translator.py {--engine=xx} {--from=xx} {--to=xx} text')
         print('engines:', list(ENGINES.keys()))
@@ -580,8 +634,8 @@ if __name__ == '__main__':
         print(r['translation'])
         return 0
     def test4():
-        t = BingDict()
-        r = t.translate('', '', 'one man')
+        t = AzureTranslator()
+        r = t.translate('', 'japanese', '吃饭没有？')
         # print(r['info'])
         # print()
         print(r['translation'])
