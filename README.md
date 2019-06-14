@@ -105,6 +105,7 @@ have you eaten yet
 说明：
 
 - 微软 Azure 的翻译服务（必应），自己去 [Azure](https://portal.azure.com/) 申请一个免费 Key，每月 1 万次免费查询。
+- 需要 APIKEY 的 Azure/Baidu 虽然初次使用麻烦，但是是官方标准 API，稳定性上超过其他。
 
 ## Credit
 
