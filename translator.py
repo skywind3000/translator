@@ -375,6 +375,78 @@ class BaiduTranslator (BasicTranslator):
 
 
 #----------------------------------------------------------------------
+# 分析命令行参数
+#----------------------------------------------------------------------
+def getopt (argv):
+    args = []
+    options = {}
+    if argv is None:
+        argv = sys.argv[1:]
+    index = 0
+    count = len(argv)
+    while index < count:
+        arg = argv[index]
+        if arg != '':
+            head = arg[:1]
+            if head != '-':
+                break
+            if arg == '-':
+                break
+            name = arg.lstrip('-')
+            key, _, val = name.partition('=')
+            options[key.strip()] = val.strip()
+        index += 1
+    while index < count:
+        args.append(argv[index])
+        index += 1
+    return options, args
+
+
+#----------------------------------------------------------------------
+# 引擎注册
+#----------------------------------------------------------------------
+ENGINES = {
+        'google': GoogleTranslator,
+        'youdao': YoudaoTranslator,
+    }
+
+#----------------------------------------------------------------------
+# 主程序
+#----------------------------------------------------------------------
+def main(argv = None):
+    if argv is None:
+        argv = sys.argv
+    argv = [ n for n in argv ]
+    options, args = getopt(argv[1:])
+    engine = options.get('engine')
+    if not engine:
+        engine = 'google'
+    sl = options.get('from')
+    if not sl:
+        sl = 'auto'
+    tl = options.get('to')
+    if not tl:
+        tl = 'auto'
+    if not args:
+        print('usage: translator.py {--engine=xx} {--from=xx} {--to=xx} text')
+        print('engines:', list(ENGINES.keys()))
+        return 0
+    text = ' '.join(args)
+    cls = ENGINES.get(engine)
+    if not cls:
+        print('bad engine name: ' + engine)
+        return -1
+    translator = cls()
+    res = translator.translate(sl, tl, text)
+    if not res:
+        return -2
+    if 'translation' not in res:
+        return -3
+    print(res['translation'])
+    return 0
+
+
+#----------------------------------------------------------------------
 # testing suit
 #----------------------------------------------------------------------
 if __name__ == '__main__':
@@ -402,7 +474,15 @@ if __name__ == '__main__':
         pprint.pprint(r)
         print(r['translation'])
         return 0
-    test3()
+    def test4():
+        argv = ['', '正在测试翻译一段话']
+        main(argv)
+        print('=====')
+        argv = ['', '--engine=youdao', '正在测试翻译一段话']
+        main(argv)
+        return 0
+    # test4()
+    main()
 
 
 

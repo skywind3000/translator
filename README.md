@@ -51,11 +51,48 @@ xxx
 
 ## Usage
 
+```bash
+translator.py [--engine=引擎名称] [--from=语言] [--to=语言] {文字}
+```
+
+测试：
+
+```bash
+python translator.py 吃饭了没有?
+```
+
+输出：
+
+```
+Have you eaten yet?
+
+-------------
+Alternatives
+- 吃饭了没有?
+  * Have you eaten yet?
+  * Eat yet?
+```
+
+测试：（有道引擎）
+
+```bash
+python translator.py --engine=youdao 吃饭了没有?
+```
+
+输出：
+
+```
+Have a meal not?
+---------
+have you eaten yet
+```
+
+
 ## Engines
 
 可以使用下面引擎
 
-| 引擎名称 | 说明 | 标准接口 | 国内直接访问 | 需要 Key 吗 | 免费 | 状态 |
+| 引擎名称 | 说明 | 标准接口 | 国内直连 | 需要 Key 吗 | 免费 | 状态 |
 |---------|--------|--|--|--|--|--|
 | google | 谷歌 | Yes | Yes | No | 免费 | 完成 |
 | youdao | 有道 | No | Yes | No | 免费 | 完成 | 
