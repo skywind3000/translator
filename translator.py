@@ -239,6 +239,18 @@ class BasicTranslator(object):
             tl = langmap[tl.lower()]
         return sl, tl
     
+    def md5sum (self, text):
+        import hashlib
+        m = hashlib.md5()
+        if sys.version_info[0] < 3:
+            if isinstance(text, unicode):
+                text = text.encode('utf-8')
+        else:
+            if isinstance(text, str):
+                text = text.encode('utf-8')
+        m.update(text)
+        return m.hexdigest()
+
 
 #----------------------------------------------------------------------
 # Azure Translator
@@ -509,25 +521,63 @@ class BaiduTranslator (BasicTranslator):
 
     def __init__ (self, **argv):
         super(BaiduTranslator, self).__init__('baidu', **argv)
-        self._agent = 'Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) '
-        self._agent += ' AppleWebKit/537.36 (KHTML, like Gecko) '
-        self._agent += ' Chrome/46.0.2490.76 Mobile Safari/537.36'
-        langmap = {}
-        langmap['zh-CN'] = 'zh'
-        langmap['en-US'] = 'en'
-        self._langmap = langmap
+        if 'apikey' not in self._config:
+            sys.stderr.write('error: missing apikey in [baidu] section\n')
+            sys.exit()
+        if 'secret' not in self._config:
+            sys.stderr.write('error: missing secret in [baidu] section\n')
+            sys.exit()
+        self.apikey = self._config['apikey']
+        self.secret = self._config['secret']
+        langmap = {
+                'zh-cn': 'zh',
+                'zh-chs': 'zh',
+                'zh-cht': 'cht',
+                'en-us': 'en', 
+                'en-gb': 'en',
+                'ja': 'jp',
+            }
+        self.langmap = langmap
+
+    def convert_lang (self, lang):
+        t = lang.lower()
+        if t in self.langmap:
+            return self.langmap[t]
+        return lang
 
     def translate (self, sl, tl, text):
         sl, tl = self.guess_language(sl, tl, text)
         req = {}
-        req['query'] = text
-        req['from'] = self._langmap.get(sl, 'en')
-        req['to'] = self._langmap.get(tl, 'en')
-        url = "https://fanyi.baidu.com/extendtrans"
+        req['q'] = text
+        req['from'] = self.convert_lang(sl)
+        req['to'] = self.convert_lang(tl)
+        req['appid'] = self.apikey
+        req['salt'] = str(int(time.time() * 1000) + random.randint(0, 10))
+        req['sign'] = self.sign(text, req['salt'])
+        url = "https://fanyi-api.baidu.com/api/trans/vip/translate"
         r = self.http_post(url, req)
-        obj = r.json()
+        resp = r.json()
         res = {}
-        return obj
+        res['text'] = text
+        res['sl'] = sl
+        res['tl'] = tl
+        res['info'] = resp
+        res['translation'] = self.render(resp)
+        res['html'] = None
+        res['xterm'] = None
+        return res
+
+    def sign (self, text, salt):
+        t = self.apikey + text + salt + self.secret
+        return self.md5sum(t)
+
+    def render (self, resp):
+        output = ''
+        result = resp['trans_result']
+        for item in result:
+            output += '' + item['src'] + '\n'
+            output += ' * ' + item['dst'] + '\n'
+        return output
 
 
 #----------------------------------------------------------------------
@@ -564,6 +614,7 @@ def getopt (argv):
 ENGINES = {
         'google': GoogleTranslator,
         'azure': AzureTranslator,
+        'baidu': BaiduTranslator,
         'youdao': YoudaoTranslator,
         'bing': BingDict,
     }
@@ -639,6 +690,13 @@ if __name__ == '__main__':
         # print(r['info'])
         # print()
         print(r['translation'])
+    def test5():
+        t = BaiduTranslator()
+        r = t.translate('', '', '吃饭了没有?')
+        import pprint
+        pprint.pprint(r)
+        print(r['translation'])
+        return 0
     def test9():
         argv = ['', '正在测试翻译一段话']
         main(argv)
@@ -646,7 +704,7 @@ if __name__ == '__main__':
         argv = ['', '--engine=youdao', '正在测试翻译一段话']
         main(argv)
         return 0
-    # test4()
+    # test5()
     main()
 
 
