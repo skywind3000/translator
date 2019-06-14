@@ -346,12 +346,12 @@ class YoudaoTranslator (BasicTranslator):
 
 
 #----------------------------------------------------------------------
-# Bing Translator
+# Bing2: 免费 web 接口，只能查单词
 #----------------------------------------------------------------------
-class BingTranslator (BasicTranslator):
+class BingDict (BasicTranslator):
 
     def __init__ (self, **argv):
-        super(BingTranslator, self).__init__('bing', **argv)
+        super(BingDict, self).__init__('bing', **argv)
         self._agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101'
         self._agent += ' Firefox/50.0'
         self._url = 'http://cn.bing.com/dict/SerpHoverTrans'
@@ -365,7 +365,30 @@ class BingTranslator (BasicTranslator):
             'Accept-Encoding': 'gzip, deflate',
         }
         resp = self.http_get(url, None, headers)
-        print(resp.text)
+        res = {}
+        res['sl'] = 'auto'
+        res['tl'] = 'auto'
+        res['text'] = text
+        res['info'] = resp.text
+        res['translation'] = self.render(text, resp.text)
+        return res
+
+    def render (self, word, html):
+        from bs4 import BeautifulSoup
+        if not html:
+            return ''
+        soup = BeautifulSoup(html, 'lxml')
+        if soup.find('h4').text.strip() != word:
+            return None
+        lis = soup.find_all('li')
+        trans = []
+        for item in lis:
+            t = item.get_text()
+            if t:
+                trans.append(t)
+        if not trans:
+            return None
+        return '\n'.join(trans)
 
 
 
@@ -432,6 +455,7 @@ def getopt (argv):
 ENGINES = {
         'google': GoogleTranslator,
         'youdao': YoudaoTranslator,
+        'bingdict': BingDict,
     }
 
 #----------------------------------------------------------------------
@@ -556,9 +580,11 @@ if __name__ == '__main__':
         print(r['translation'])
         return 0
     def test4():
-        t = BingTranslator()
-        r = t.translate('', '', 'kiss')
-        print(r)
+        t = BingDict()
+        r = t.translate('', '', 'one man')
+        # print(r['info'])
+        # print()
+        print(r['translation'])
     def test9():
         argv = ['', '正在测试翻译一段话']
         main(argv)
