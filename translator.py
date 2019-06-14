@@ -214,10 +214,12 @@ class GoogleTranslator (BasicTranslator):
         return res
 
     def render (self, obj):
-        result = self.get_result('', obj)
+        result = self.get_result('', obj) + '\n'
         result = self.get_synonym(result, obj)
         if len(obj) >= 13 and obj[12]:
             result = self.get_definitions(result, obj)
+        if len(obj) >= 6 and obj[5]:
+            result = self.get_alternative(result, obj)
         return result
 
     def get_result (self, result, obj):
@@ -228,22 +230,35 @@ class GoogleTranslator (BasicTranslator):
 
     def get_synonym (self, result, resp):
         if resp[1]:
-            result += '\n=========\n'
-            result += 'Translations:\n'
+            result += '\n-------------\n'
+            result += 'Translations\n'
             for x in resp[1]:
-                result += '{}.\n'.format(x[0][0])
+                result += '\n'
+                result += '[{}]\n'.format(x[0][0])
                 for i in x[2]:
                     result += '{}: {}\n'.format(i[0], ", ".join(i[1]))
         return result
 
     def get_definitions (self, result, resp):
-        result += '\n=========\n'
-        result += '0_0: Definitions of {}\n'.format(self.text)
+        result += '\n-------------\n'
+        result += 'Definitions\n'
         for x in resp[12]:
-            result += '{}.\n'.format(x[0])
+            result += '\n'
+            result += '[{}]\n'.format(x[0])
             for y in x[1]:
-                result += '  - {}\n'.format(y[0])
-                result += '    * {}\n'.format(y[2]) if len(y) >= 3 else ''
+                result += '- {}\n'.format(y[0])
+                result += '  * {}\n'.format(y[2]) if len(y) >= 3 else ''
+        return result
+
+    def get_alternative (self, result, resp):
+        if len(resp) < 6 or (not resp[5]):
+            return result
+        result += '\n-------------\n'
+        result += 'Alternatives\n'
+        for x in resp[5]:
+            result += '- {}\n'.format(x[0])
+            for i in x[2]:
+                result += '  * {}\n'.format(i[0])
         return result
 
 
@@ -339,13 +354,15 @@ if __name__ == '__main__':
         return 0
     def test2():
         gt = GoogleTranslator()
-        r = gt.translate('auto', 'auto', 'Hello, World !!')
+        # r = gt.translate('auto', 'auto', 'Hello, World !!')
         # r = gt.translate('auto', 'auto', '你吃饭了没有?')
+        # r = gt.translate('auto', 'auto', '长')
+        r = gt.translate('auto', 'auto', 'long')
         # r = gt.translate('auto', 'auto', 'kiss')
         # r = gt.translate('auto', 'auto', '亲吻')
         import pprint
         print(r['translation'])
-        pprint.pprint(r['info'])
+        # pprint.pprint(r['info'])
         return 0
     def test3():
         t = YoudaoTranslator()
