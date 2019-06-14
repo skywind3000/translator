@@ -99,8 +99,9 @@ have you eaten yet
 | baidu | 百度 | Yes | Yes | **Yes** | 每月1万条内免费 | 完成 |
 | youdao | 有道 | No | Yes | No | 免费 | 完成 | 
 | bingdict | 必应词典（只能中英） | Yes | Yes | No | 免费 | 完成 |
+| ciba | 词霸 | Yes | Yes | No | 免费 | 完成 |
+| sogou | 搜狗 | Yes | Yes | No | 免费 | TODO |
 | baiduweb | 百度 | No (爬虫) | Yes | No | 免费 | TODO |
-| ciba | 词霸 | Yes | Yes | Yes | 免费 | TODO |
 
 说明：
 
