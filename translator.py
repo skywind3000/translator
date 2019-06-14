@@ -5,7 +5,7 @@
 # translator.py - 命令行翻译（谷歌，必应，百度，有道，词霸）
 #
 # Created by skywind on 2019/06/14
-# Last Modified: 2019/06/14 16:05:47
+# Version: 1.0.1, Last Modified: 2019/06/14 21:16
 #
 #======================================================================
 from __future__ import print_function, unicode_literals
@@ -69,7 +69,7 @@ class BasicTranslator(object):
             for key, val in cp.items(sect):
                 lowsect, lowkey = sect.lower(), key.lower()
                 config.setdefault(lowsect, {})[lowkey] = val
-        if 'default' not in self.config:
+        if 'default' not in config:
             config['default'] = {}
         return config
 
@@ -346,6 +346,30 @@ class YoudaoTranslator (BasicTranslator):
 
 
 #----------------------------------------------------------------------
+# Bing Translator
+#----------------------------------------------------------------------
+class BingTranslator (BasicTranslator):
+
+    def __init__ (self, **argv):
+        super(BingTranslator, self).__init__('bing', **argv)
+        self._agent = 'Mozilla/5.0 (X11; Linux x86_64; rv:50.0) Gecko/20100101'
+        self._agent += ' Firefox/50.0'
+        self._url = 'http://cn.bing.com/dict/SerpHoverTrans'
+
+    def translate (self, sl, tl, text):
+        url = self._url + '?q=' + self.url_quote(text)
+        headers = {
+            'Host': 'cn.bing.com',
+            'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+            'Accept-Language': 'en-US,en;q=0.5',
+            'Accept-Encoding': 'gzip, deflate',
+        }
+        resp = self.http_get(url, None, headers)
+        print(resp.text)
+
+
+
+#----------------------------------------------------------------------
 # Baidu Translator
 #----------------------------------------------------------------------
 class BaiduTranslator (BasicTranslator):
@@ -532,6 +556,10 @@ if __name__ == '__main__':
         print(r['translation'])
         return 0
     def test4():
+        t = BingTranslator()
+        r = t.translate('', '', 'kiss')
+        print(r)
+    def test9():
         argv = ['', '正在测试翻译一段话']
         main(argv)
         print('=====')
