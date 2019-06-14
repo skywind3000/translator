@@ -95,8 +95,8 @@ have you eaten yet
 | 引擎名称 | 说明 | 标准接口 | 国内直连 | 需要 Key 吗 | 免费 | 状态 |
 |---------|--------|--|--|--|--|--|
 | google | 谷歌 | Yes | Yes | No | 免费 | 完成 |
-| azure | 微软翻译 | Yes | Yes | Yes | 每月1万条内免费 | 完成 | 
-| baidu | 百度 | Yes | Yes | Yes | 每月1万条内免费 | 完成 |
+| azure | 微软 | Yes | Yes | **Yes** | 每月1万条内免费 | 完成 | 
+| baidu | 百度 | Yes | Yes | **Yes** | 每月1万条内免费 | 完成 |
 | youdao | 有道 | No | Yes | No | 免费 | 完成 | 
 | baiduweb | 百度 | No (爬虫) | Yes | No | 免费 | TODO |
 | bing | 必应词典（只能中英） | Yes | Yes | No | 免费 | TODO |
