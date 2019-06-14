@@ -162,6 +162,7 @@ class BasicTranslator(object):
         res['text'] = text          # 需要翻译的文本
         res['translation'] = None   # 翻译结果
         res['html'] = None          # HTML 格式的翻译结果（如果有的话）
+        res['xterm'] = None         # ASCII 色彩输出（如果有的话）
         res['info'] = None          # 原始网站的返回值
         return res
 
@@ -312,8 +313,36 @@ class YoudaoTranslator (BasicTranslator):
         r = self.http_post(self.url, data, header)
         obj = r.json()
         translation = ''
-        result = obj.get('translateResult', [])
-        return obj
+        res = {}
+        res['text'] = text
+        res['sl'] = sl
+        res['tl'] = tl
+        res['translation'] = self.render(obj)
+        res['info'] = obj
+        res['html'] = None
+        res['xterm'] = None
+        return res
+
+    def render (self, obj):
+        output = ''
+        t = obj.get('translateResult')
+        if t:
+            for n in t:
+                part = []
+                for m in n:
+                    x = m.get('tgt')
+                    if x:
+                        part.append(x)
+                if part:
+                    output += ', '.join(part) + '\n'
+        if 'smartResult' in obj:
+            output += '---------\n'
+            smarts = obj['smartResult']['entries']
+            for entry in smarts:
+                if entry:
+                    entry = entry.replace('\r', '')
+                    output += entry
+        return output
 
 
 #----------------------------------------------------------------------
@@ -340,7 +369,9 @@ class BaiduTranslator (BasicTranslator):
         req['to'] = self._langmap.get(tl, 'en')
         url = "https://fanyi.baidu.com/extendtrans"
         r = self.http_post(url, req)
-        return r
+        obj = r.json()
+        res = {}
+        return obj
 
 
 #----------------------------------------------------------------------
@@ -369,8 +400,9 @@ if __name__ == '__main__':
         r = t.translate('auto', 'auto', 'kiss')
         import pprint
         pprint.pprint(r)
+        print(r['translation'])
         return 0
-    test2()
+    test3()
 
 
 
