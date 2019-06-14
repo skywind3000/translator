@@ -98,8 +98,8 @@ have you eaten yet
 | azure | 微软 | Yes | Yes | **Yes** | 每月1万条内免费 | 完成 | 
 | baidu | 百度 | Yes | Yes | **Yes** | 每月1万条内免费 | 完成 |
 | youdao | 有道 | No | Yes | No | 免费 | 完成 | 
+| bingdict | 必应词典（只能中英） | Yes | Yes | No | 免费 | 完成 |
 | baiduweb | 百度 | No (爬虫) | Yes | No | 免费 | TODO |
-| bing | 必应词典（只能中英） | Yes | Yes | No | 免费 | TODO |
 | ciba | 词霸 | Yes | Yes | Yes | 免费 | TODO |
 
 说明：
