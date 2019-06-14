@@ -411,6 +411,59 @@ ENGINES = {
     }
 
 #----------------------------------------------------------------------
+# 
+#----------------------------------------------------------------------
+langmap = {
+        "arabic": "ar",
+        "bulgarian": "bg",
+        "catalan": "ca",
+        "chinese": "zh-CN",
+        "chinese simplified": "zh-CHS",
+        "chinese traditional": "zh-CHT",
+        "czech": "cs",
+        "danish": "da",	
+        "dutch": "nl",
+        "english": "en",
+        "estonian": "et",
+        "finnish": "fi",
+        "french": "fr",
+        "german": "de",
+        "greek": "el",
+        "haitian creole": "ht",
+        "hebrew": "he",
+        "hindi": "hi",
+        "hmong daw": "mww",
+        "hungarian": "hu",
+        "indonesian": "id",
+        "italian": "it",
+        "japanese": "ja",
+        "klingon": "tlh",
+        "klingon (piqad)":"tlh-Qaak",
+        "korean": "ko",
+        "latvian": "lv",
+        "lithuanian": "lt",
+        "malay": "ms",
+        "maltese": "mt",
+        "norwegian": "no",
+        "persian": "fa",
+        "polish": "pl",
+        "portuguese": "pt",
+        "romanian": "ro",
+        "russian": "ru",
+        "slovak": "sk",
+        "slovenian": "sl",
+        "spanish": "es",
+        "swedish": "sv",
+        "thai": "th",
+        "turkish": "tr",
+        "ukrainian": "uk",
+        "urdu": "ur",
+        "vietnamese": "vi",
+        "welsh": "cy"
+    }
+
+
+#----------------------------------------------------------------------
 # 主程序
 #----------------------------------------------------------------------
 def main(argv = None):
@@ -427,6 +480,10 @@ def main(argv = None):
     tl = options.get('to')
     if not tl:
         tl = 'auto'
+    if sl.lower() in langmap:
+        sl = langmap[sl.lower()]
+    if tl.lower() in langmap:
+        tl = langmap[tl.lower()]
     if not args:
         print('usage: translator.py {--engine=xx} {--from=xx} {--to=xx} text')
         print('engines:', list(ENGINES.keys()))
