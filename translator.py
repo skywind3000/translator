@@ -648,7 +648,7 @@ ENGINES = {
         'baidu': BaiduTranslator,
         'youdao': YoudaoTranslator,
         'bing': BingDict,
-        'ciba', CibaTranslator,
+        'ciba': CibaTranslator,
     }
 
 
