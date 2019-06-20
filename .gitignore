@@ -1,0 +1,12 @@
+*.pyc
+*.pyo
+*.log
+*.tmp
+*.out
+*.ini
+*.yml
+*.yaml
+/logs/*
+/data/*
+__pycache__/
+
