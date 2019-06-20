@@ -149,6 +149,11 @@ proxy=socks5h://localhost:1080
 
 来配置代理（如果你本机有的话），这里代理使用 `socks5h://` 的开头，这是 python requests 包里面的语法格式，多了一个 `h` 意思是域名也送给代理解析，本地不解析域名。
 
+### 密钥申请
+
+- Azure：先用微软账户开通 [Azure](https://portal.azure.com)，然后添加 Microsoft Translator 服务，然后可以得到免费 KEY，这里有一份简单的 [教程](https://ordasoft.com/News/SEF-Translate-Documentation/how-to-get-bing-translate-api.html)。
+- 百度：去 [百度翻译开放平台](http://api.fanyi.baidu.com/api/trans/product/index)，申请开通。
+
 ## Credit
 
 逐步完善添加
