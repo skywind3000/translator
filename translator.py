@@ -315,8 +315,7 @@ class GoogleTranslator (BasicTranslator):
         self._agent += ' Gecko/20100101 Firefox/59.0'
 
     def get_url (self, sl, tl, qry):
-        http_host = self._options.get('host', 'translate.googleapis.com')
-        http_host = 'translate.google.cn'
+        http_host = self._config.get('host', 'translate.googleapis.com')
         qry = self.url_quote(qry)
         url = 'https://{}/translate_a/single?client=gtx&sl={}&tl={}&dt=at&dt=bd&dt=ex&' \
               'dt=ld&dt=md&dt=qca&dt=rw&dt=rm&dt=ss&dt=t&q={}'.format(

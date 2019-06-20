@@ -12,14 +12,34 @@
 - 多种引擎：初期支持：谷歌，必应，有道，百度，词霸，360，并且不断更新。
 - 同引擎多实现：官方接口（有的话），页面爬虫（如果官方接口要付费的话）。
 - 三种输出：纯文本，HTML（方便集成字典），xterm（终端色彩高亮）。
+- 可以方便的同 GoldenDict 等工具集成。
+
+## Screenshots
+
+### 命令行
+
+![](images/linux.png)
+
+### GoldenDict
+
+![](images/goldendict.png)
+
+同一个页面内同时集成多个翻译引擎，一次查询所有结果同时显示。
 
 ## Requirements
 
 Python 3.5+ 以及 requests 库：
 
 ```bash
-pip install requests PySocks
+pip install requests
 ```
+
+想要支持代理的话，安装 requests 的 socks 包：
+
+```bash
+pip install requests[socks]
+```
+
 
 ## Configuration
 
@@ -94,7 +114,7 @@ have you eaten yet
 
 | 引擎名称 | 说明 | 标准接口 | 国内直连 | 需要 Key 吗 | 免费 | 状态 |
 |---------|--------|--|--|--|--|--|
-| google | 谷歌 | Yes | Yes | No | 免费 | 完成 |
+| google | 谷歌 | Yes | Yes* | No | 免费 | 完成 |
 | azure | 微软 | Yes | Yes | **Yes** | 每月1万条内免费 | 完成 | 
 | baidu | 百度 | Yes | Yes | **Yes** | 每月1万条内免费 | 完成 |
 | youdao | 有道 | No | Yes | No | 免费 | 完成 | 
@@ -107,6 +127,27 @@ have you eaten yet
 
 - 微软 Azure 的翻译服务（必应），自己去 [Azure](https://portal.azure.com/) 申请一个免费 Key，每月 1 万次免费查询。
 - 需要 APIKEY 的 Azure/Baidu 虽然初次使用麻烦，但是是官方标准 API，稳定性上超过其他。
+- 谷歌翻译直接访问需要配置 config.ini 里的 host 或者代理。
+
+## Tips
+
+### 谷歌翻译的直接访问
+
+默认使用 `translate.googleapis.com` 有时国内不一定能够直连，所以国内可以设置：
+
+```ini
+[google]
+host = translate.google.cn
+```
+
+来修改 API 地址，或者使用：
+
+```ini
+[google]
+proxy=socks5h://localhost:1080
+```
+
+来配置代理（如果你本机有的话），这里代理使用 `socks5h://` 的开头，这是 python requests 包里面的语法格式，多了一个 `h` 意思是域名也送给代理解析，本地不解析域名。
 
 ## Credit
 
