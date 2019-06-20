@@ -154,6 +154,17 @@ proxy=socks5h://localhost:1080
 - Azure：用微软账户开通 [Azure](https://portal.azure.com)，然后添加 Microsoft Translator 服务，然后得到免费 KEY，不会可以看 [教程](https://ordasoft.com/News/SEF-Translate-Documentation/how-to-get-bing-translate-api.html)。
 - 百度：到 [百度翻译开放平台](http://api.fanyi.baidu.com/api/trans/product/index)，申请开通。
 
+### 词典集成
+
+要集成 GoldenDict，先在命令行下测试 Python 可以顺利运行该脚本，然后设置你的词典：
+
+![](images/setup.png)
+
+按 F3 打开词典设置，然后点 “程序”，选择 “纯文本”，后面是名字和运行命令，最后是图标路径（图标请自己下载）。
+
+你想要同时展示多少个翻译引擎就配置多少行命令。
+
+
 ## Credit
 
 逐步完善添加
