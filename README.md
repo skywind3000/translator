@@ -4,7 +4,7 @@
 
 ## Preface
 
-命令行翻译工具，可以单独使用，可以集成 Vim/Emacs，可以搭配 GoldenDict，之前再用别人的命令行有道翻译，用着用着，接口就挂掉了，网上找了两段百度翻译的代码，调试下发现接口已经过期。
+命令行翻译工具，可单独使用，可集成 Vim/Emacs，也可搭配 GoldenDict，之前用别人的命令行有道翻译，用着用着接口就挂了，网上找了两段百度翻译的代码，调试下发现接口已经过期。
 
 最终找到一个桌面软件：QTranslate，同时支持十大翻译引擎，这个挂了可以用那个，这个翻译的不好可以看另外一个。所以我打算模仿一下 QTranslate，在命令行下面写这么一个东西，目标是：
 
@@ -151,8 +151,8 @@ proxy=socks5h://localhost:1080
 
 ### 密钥申请
 
-- Azure：先用微软账户开通 [Azure](https://portal.azure.com)，然后添加 Microsoft Translator 服务，然后可以得到免费 KEY，这里有一份简单的 [教程](https://ordasoft.com/News/SEF-Translate-Documentation/how-to-get-bing-translate-api.html)。
-- 百度：去 [百度翻译开放平台](http://api.fanyi.baidu.com/api/trans/product/index)，申请开通。
+- Azure：用微软账户开通 [Azure](https://portal.azure.com)，然后添加 Microsoft Translator 服务，然后得到免费 KEY，不会可以看 [教程](https://ordasoft.com/News/SEF-Translate-Documentation/how-to-get-bing-translate-api.html)。
+- 百度：到 [百度翻译开放平台](http://api.fanyi.baidu.com/api/trans/product/index)，申请开通。
 
 ## Credit
 
