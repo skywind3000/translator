@@ -69,6 +69,12 @@ xxx
 
 ```
 
+Windows 下面的话，该文件位于：
+
+    C:\Users\你的用户名\.config\translator
+
+用记事本打开编辑即可。
+
 ## Usage
 
 ```bash
@@ -160,9 +166,13 @@ proxy=socks5h://localhost:1080
 
 ![](images/setup.png)
 
-按 F3 打开词典设置，然后点 “程序”，选择 “纯文本”，后面是名字和运行命令，最后是图标路径（图标请自己下载）。
+按 F3 打开词典设置，然后点 “程序”，选择 “纯文本”，后面是名字和运行命令,假设你的 Python 安装在 C:\python37 而脚本在 D:\Github\translator，那么命令为：
 
-你想要同时展示多少个翻译引擎就配置多少行命令。
+    C:\python37\python d:\Github\translator\translator.py --engine=azure "%GDWORD%"
+
+注意 `%GDWORD%` 需要用双引号引起来，这样的话词组不会出错。
+
+最后是图标路径（图标请自己下载），你想要同时展示多少个翻译引擎就参考上面，配置多少行 `--engine=` 不同的命令即可。
 
 
 ## Credit
