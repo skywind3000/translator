@@ -16,7 +16,22 @@ import re
 import random
 import copy
 import json
+import codecs
 import pprint
+
+
+
+#----------------------------------------------------------------------
+# 编码器兼容
+#----------------------------------------------------------------------
+if sys.version_info[0] < 3:
+    reload(sys)   # noqa: F821
+    sys.setdefaultencoding('utf-8')
+    # sys.stdout = codecs.getwriter('utf-8')(sys.stdout, 'ignore')
+    # sys.stderr = codecs.getwriter('utf-8')(sys.stderr, 'ignore')
+else:
+    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'ignore')
+    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'ignore')
 
 
 #----------------------------------------------------------------------
@@ -805,8 +820,8 @@ if __name__ == '__main__':
         argv = ['', '--engine=bing', '--sl=zh', '--tl=en', '-json', '苹果']
         main(argv)
         return 0
-    # test9()
-    main()
+    test9()
+    # main()
 
 
 
