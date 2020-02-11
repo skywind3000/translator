@@ -20,9 +20,8 @@ import codecs
 import pprint
 
 
-
 #----------------------------------------------------------------------
-# 编码器兼容
+# 编码兼容
 #----------------------------------------------------------------------
 if sys.version_info[0] < 3:
     reload(sys)   # noqa: F821
@@ -30,8 +29,9 @@ if sys.version_info[0] < 3:
     # sys.stdout = codecs.getwriter('utf-8')(sys.stdout, 'ignore')
     # sys.stderr = codecs.getwriter('utf-8')(sys.stderr, 'ignore')
 else:
-    sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'ignore')
-    sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'ignore')
+    # sys.stdout = codecs.getwriter('utf-8')(sys.stdout.buffer, 'ignore')
+    # sys.stderr = codecs.getwriter('utf-8')(sys.stderr.buffer, 'ignore')
+    pass
 
 
 #----------------------------------------------------------------------
@@ -737,7 +737,7 @@ def main(argv = None):
         if res['text']:
             print(res['text'])
     if 'phonetic' in res:
-        if res['phonetic']:
+        if res['phonetic'] and ('phonetic' in options):
             print('[' + res['phonetic'] + ']')
     if 'definition' in res:
         if res['definition']:
@@ -820,8 +820,8 @@ if __name__ == '__main__':
         argv = ['', '--engine=bing', '--sl=zh', '--tl=en', '-json', '苹果']
         main(argv)
         return 0
-    test9()
-    # main()
+    # test9()
+    main()
 
 
 
